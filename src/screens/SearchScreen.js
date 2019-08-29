@@ -5,7 +5,7 @@ export default class SearchScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Home</Text>
+        <Text>Search</Text>
       </View>
     );
   }

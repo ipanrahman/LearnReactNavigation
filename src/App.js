@@ -3,6 +3,7 @@ import {
   createStackNavigator,
   createAppContainer,
   createBottomTabNavigator,
+  createSwitchNavigator,
 } from 'react-navigation';
 
 import {Icon} from 'react-native-elements';
@@ -16,50 +17,65 @@ export default class App extends Component {
   }
 }
 
-const AppBottomNavigator = createBottomTabNavigator({
-  Home: {
-    screen: HomeScreen,
-    navigationOptions: {
-      tabBarIcon: <Icon name="home-outline" type="material-community" />,
-      tabBarOptions: {
-        showLabel: false,
-      },
-    },
-  },
-  Search: {
-    screen: SearchScreen,
-    navigationOptions: {
-      tabBarIcon: <Icon name="search" type="feather" />,
-      tabBarOptions: {
-        showLabel: false,
-      },
-    },
-  },
-});
-
-const AppStackNavigator = createStackNavigator(
+const AppBottomNavigator = createBottomTabNavigator(
   {
-    AppBottomNavigator: {screen: AppBottomNavigator},
+    Home: createStackNavigator(
+      {
+        HomeScreen: HomeScreen,
+      },
+      {
+        defaultNavigationOptions: {
+          headerLeft: (
+            <Icon
+              name="camera-outline"
+              type="material-community"
+              containerStyle={{paddingLeft: 10}}
+            />
+          ),
+          title: 'Instagram',
+          headerRight: (
+            <Icon
+              name="send-o"
+              type="font-awesome"
+              containerStyle={{paddingRight: 10}}
+            />
+          ),
+        },
+      },
+    ),
+    Search: createStackNavigator({
+      SearchScreen: SearchScreen,
+    }),
   },
   {
-    defaultNavigationOptions: {
-      headerLeft: (
-        <Icon
-          name="camera-outline"
-          type="material-community"
-          containerStyle={{paddingLeft: 10}}
-        />
-      ),
-      title: 'Instagram',
-      headerRight: (
-        <Icon
-          name="send-o"
-          type="font-awesome"
-          containerStyle={{paddingRight: 10}}
-        />
-      ),
-    },
+    defaultNavigationOptions: ({navigation}) => ({
+      lazy: false,
+      tabBarIcon: ({tintColor}) => {
+        const {routeName} = navigation.state;
+        switch (routeName) {
+          case 'Home':
+            return <Icon name="home-outline" type="material-community" />;
+          case 'Search':
+            return <Icon name="search" type="feather" />;
+        }
+      },
+    }),
   },
 );
 
-const AppContainer = createAppContainer(AppStackNavigator);
+const AppStackNavigator = createStackNavigator(
+  {
+    AppBottomNavigator: {
+      screen: AppBottomNavigator,
+    },
+  },
+  {
+    defaultNavigationOptions: {header: null},
+  },
+);
+
+const AppContainer = createAppContainer(
+  createSwitchNavigator({
+    AppStackNavigator: {screen: AppStackNavigator},
+  }),
+);
