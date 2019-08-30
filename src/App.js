@@ -60,6 +60,9 @@ const AppBottomNavigator = createBottomTabNavigator(
         }
       },
     }),
+    tabBarOptions: {
+      showLabel: false,
+    },
   },
 );
 
